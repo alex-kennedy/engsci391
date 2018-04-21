@@ -35,7 +35,7 @@ if basicvars(r) <= length(varstatus)
     varstatus(basicvars(r)) = 0;
 end
 if s <= length(varstatus)
-    varstatus(s) = 1;
+    varstatus(s) = 1; % = r
 end
 
 basicvars(r) = s;

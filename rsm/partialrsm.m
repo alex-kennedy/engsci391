@@ -23,7 +23,12 @@ while true
         break
     end
 
-    [varstatus,basicvars,~,Binv,xB] = fullupdate(m,c,s,r,BinvAs,phase1,varstatus,basicvars,Binv,xB,n);
+    [varstatus,basicvars,cB,Binv,xB] = fullupdate(m,c,s,r,BinvAs,phase1,varstatus,basicvars,Binv,xB,n);
+    
+%     disp(cB(basicvars))
+%     disp(xB)
+%     disp(cB * xB)
+    
 end
 end
 

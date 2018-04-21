@@ -13,7 +13,7 @@ function  [result,z,x,pi] = fullrsm(m,n,c,A,b)
 %   x = nx1 solution vector
 %   pi = mx1 dual vector
 
-tol = 1e-8
+tol = 1e-8;
 
 % Initialisations
 basicvars = n + 1:n + m;
@@ -25,7 +25,7 @@ phase1 = true;
 
 [~,minrc,varstatus,basicvars,Binv,~,~] = partialrsm(m,n,A,b,c,Binv,varstatus,basicvars,phase1);
 
-if minrc > -tol
+if minrc > tol
     % Problem is infeasible, could not drive all artificial variables from
     % the basis
     result = 0;

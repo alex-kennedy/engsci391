@@ -3,11 +3,11 @@
 clear
 
 % Toggles for tests:
-tests = [1:13,15:17];
+tests = 16:19;
 
 % Numerical errors can mean equality is not achieved within a machine
 % epsilon. We will define our own "equality" and maximum error.
-max_err = 1e-3;
+max_err = 1e-4;
 equal = @(a,b) abs(a-b) < max_err;
 
 
@@ -80,7 +80,7 @@ if ismember(5,tests)
     b = [7; 1200; 120];
     [result,z,x,pi] = fullrsm(m,n,c,A,b);
     assert(result == 1)
-    assert( equal(z, -3200 ))
+    assert( z == -3200 )
     assert( all( equal(x,[4;4;1;0;0]) ))
     assert( all( equal(pi,[0; -2-1/3;-3-1/3]) ))
 end
@@ -95,7 +95,7 @@ if ismember(6,tests)
     b = [40; 48];
     [result,z,x,pi] = fullrsm(m,n,c,A,b);
     assert(result == 1)
-    assert( equal(z, -3000) )
+    assert( equal(z, -3000 ))
     assert( all(equal(x, [8;16;0;0]) ))
     assert( all( equal(pi,[-75; 0]) ))
 end
@@ -129,7 +129,7 @@ if ismember(8,tests)
         [result,z,x,pi] = fullrsm(m,n,c,A,b);
         assert(result == 1)
         assert(equal(z,9*k))
-        assert( all( equal(x, [0;k;k;0;0;0]) ))
+        assert( all(x == [0;k;k;0;0;0]) )
         assert( all( equal(pi,[0; -4; 9]) ))
     end
 end
@@ -234,7 +234,7 @@ end
 % without throwing any errors.
 result = [];
 if ismember(14,tests)
-    max_size = 100;
+    max_size = 25;
     max_value = 20;
     for m = 1:(max_size-1)
         for n = (m+1):max_size
@@ -266,8 +266,8 @@ i = 0;
 % If you push max_size too high, you need to push max_error (a.k.a tol) higher!
 if ismember(15,tests)
     max_size = 10;
-    max_value = 7;
-    num_tests_at_dim = 100;
+    max_value = 1;
+    num_tests_at_dim = 500;
     tot_num_tests = num_tests_at_dim/2*((max_size-1)^2 + max_size-1);
     for m = 1:(max_size-1)
         for n = (m+1):max_size
@@ -319,10 +319,40 @@ if ismember(17,tests)
     b = [8; 0];
     [result,z,x,pi] = fullrsm(m,n,c,A,b);
     assert(result == 1)
-    disp(z)
-    disp(x)
+    % disp(z)
+    % disp(x)
     assert(equal(z,112))
     assert( all(equal(x,[8;0;0])) )
+end
+
+%% Test 18: Particular case Niklas and Alex failed while running test 15
+% check if you account for machine imprecision
+if ismember(18, tests)
+   m = 5;
+   n = 8;
+   c = [-4;3;-2;0;0;5;0;-4];
+   b = [3;4;5;0;0];
+   A = [3,4,5,1,-2,3,-3,-2;-4,1,-5,-3,5,4,5,4;-3,-2,-5,1,4,1,5,4;4,5,-2,1,-4,5,-1,-5;4,2,-5,4,4,-5,2,-3];
+   [result,z,x,pi] = fullrsm(m,n,c,A,b);
+   assert(result == 1)
+   assert(equal(z, -15.1698))
+   assert( all(equal(x, [2.207547169811321;0;0;0.150943396226416;0;0.603773584905660;0.301886792452830;2.339622641509434])))
+end
+
+%% Test 19: Another particular case Niklas and Alex failed while running test 15
+% check infeasibility in phase 1
+if ismember(19, tests)
+   m = 4;
+   n = 9;
+   c = [-3;-2;-2;5;5;-1;-4;3;-3];
+   b = [1;2;2;4];
+   A = [-3,-4,-4,-4,-3,-4,2,5,-2;-4,3,5,3,2,1,4,-4,3;-1,0,-5,4,1,-3,1,-5,0;5,3,1,2,1,-2,-2,-3,1];
+   [result,z,x,pi] = fullrsm(m,n,c,A,b);
+   assert(result == 0)
+%    dunno about these asserts, kinda depends on how your code works - if
+%    these don't match it's probably not a problem
+%    assert(equal(z, 3.6667))
+%    assert( all(equal(x, [1.128205128205128;0;0;0.461538461538462;0;0;1.282051282051282;0;0])))
 end
 
 %% Success message

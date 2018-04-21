@@ -18,7 +18,7 @@ ratio = xB ./ BinvAs;
 
 % Begin with extended leaving variable criterion
 if ~phase1
-    positions = transpose(basicvars > n) & BinvAs ~= 0; 
+    positions = transpose(basicvars > n) & (BinvAs < -tol | BinvAs > tol); 
     if any(positions)
         r = find(positions, 1);
         minratio = 0;

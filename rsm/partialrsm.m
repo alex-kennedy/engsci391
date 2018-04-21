@@ -1,6 +1,9 @@
 function [result,minrc,varstatus,basicvars,Binv,xB,pi] = partialrsm(m,n,A,b,c,Binv,varstatus,basicvars,phase1)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
+
+tol = 1e-8;
+
 while true
     pi = getpi(m,n,c,Binv,basicvars,phase1);
     
@@ -9,7 +12,7 @@ while true
     BinvAs = Binv * A(:,s);
     xB = Binv * b;
    
-    if minrc >= 0
+    if minrc >= -tol
         % current bfs is optimal, exit
         result = 1;
         break
@@ -23,12 +26,8 @@ while true
         break
     end
 
-    [varstatus,basicvars,cB,Binv,xB] = fullupdate(m,c,s,r,BinvAs,phase1,varstatus,basicvars,Binv,xB,n);
-    
-%     disp(cB(basicvars))
-%     disp(xB)
-%     disp(cB * xB)
-    
+    [varstatus,basicvars,~,Binv,xB] = fullupdate(m,c,s,r,BinvAs,phase1,varstatus,basicvars,Binv,xB,n);
+
 end
 end
 

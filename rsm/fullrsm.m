@@ -23,15 +23,16 @@ varstatus = zeros(1,n);
 % Move into Phase I
 phase1 = true;
 
-[~,minrc,varstatus,basicvars,Binv,~,~] = partialrsm(m,n,A,b,c,Binv,varstatus,basicvars,phase1);
+[~,minrc,varstatus,basicvars,Binv,xB,~] = partialrsm(m,n,A,b,c,Binv,varstatus,basicvars,phase1);
 
-if minrc > tol
-    % Problem is infeasible, could not drive all artificial variables from
-    % the basis
+if any(xB(basicvars > n) > tol) || any(xB(basicvars > n) < -tol) || minrc > tol
+    % Problem is infeasible. Could not drive all variables from the basis
+    % and reduce cost, or, artifical variables remained with non-zero x
+    % values.
     result = 0;
-    z = 0;
-    x = 0;
-    pi = 0;
+    z = [];
+    x = [];
+    pi = [];
     return
 end
 

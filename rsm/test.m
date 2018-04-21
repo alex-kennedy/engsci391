@@ -3,7 +3,7 @@
 clear
 
 % Toggles for tests:
-tests = 16:19;
+tests = 15;
 
 % Numerical errors can mean equality is not achieved within a machine
 % epsilon. We will define our own "equality" and maximum error.

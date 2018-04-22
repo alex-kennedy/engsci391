@@ -3,6 +3,7 @@
 clear
 
 % Toggles for tests:
+% tests = [1:13, 16:20];
 tests = 15;
 
 % Numerical errors can mean equality is not achieved within a machine
@@ -265,9 +266,9 @@ i = 0;
 
 % If you push max_size too high, you need to push max_error (a.k.a tol) higher!
 if ismember(15,tests)
-    max_size = 10;
-    max_value = 1;
-    num_tests_at_dim = 500;
+    max_size = 20;
+    max_value = 4;
+    num_tests_at_dim = 1000;
     tot_num_tests = num_tests_at_dim/2*((max_size-1)^2 + max_size-1);
     for m = 1:(max_size-1)
         for n = (m+1):max_size
@@ -353,6 +354,20 @@ if ismember(19, tests)
 %    these don't match it's probably not a problem
 %    assert(equal(z, 3.6667))
 %    assert( all(equal(x, [1.128205128205128;0;0;0.461538461538462;0;0;1.282051282051282;0;0])))
+end
+
+%% Test 20: Another case Niklas failed while running test 15
+% tolerancing again
+if ismember(20, tests)
+    m = 2;
+    n = 5;
+    A = [0,-3,5,-3,-5;2,5,5,4,4];
+    b = [3;3];
+    c = [-5;4;1;5;2];
+    [result,z,x,pi] = fullrsm(m,n,c,A,b);
+    assert(result == 1)
+    assert(equal(z, [0.6000]))
+    assert( all(equal(x, [0;0;0.6000;0;0])))
 end
 
 %% Success message

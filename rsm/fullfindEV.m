@@ -21,6 +21,6 @@ else
 end
 
 [minrc,s] = min(reducedCosts);
- 
+
 end
 

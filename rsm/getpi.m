@@ -4,7 +4,7 @@ function [pi] = getpi(m,n,c,Binv,basicvars,phase1)
 %   0 otherwise. 
 %   If any artificial variables remain in the basis, their costs are set to
 %   0 to ensure no index out of range errors occur. They are dealt with by
-%   the extended leaving variable criterion elsewhere. 
+%   the extended leaving variable criterion in Phase II. 
 % Inputs:
 %   m,n = number of constraints and variables
 %   c = nx1 cost vector
@@ -13,6 +13,7 @@ function [pi] = getpi(m,n,c,Binv,basicvars,phase1)
 %   phase1 = boolean, true if Phase I, or false otherwise
 % Outputs: 
 %   pi = 1xn array of duals
+
 if phase1
     pi = (((basicvars > n) .* 1) * Binv).';
 else

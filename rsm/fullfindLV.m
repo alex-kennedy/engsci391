@@ -35,7 +35,7 @@ ratio(BinvAs <= tol) = Inf;
 % If there are multiple minima, ensure the leaving variable is an
 % artificial, if present (i.e. the largest index)
 if phase1
-    r = find(basicvars == max(basicvars(ratio == minratio)));
+    r = find(basicvars == max(basicvars(ratio <= minratio + tol)));
 end
 
 end

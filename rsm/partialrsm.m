@@ -1,8 +1,8 @@
 function [result,minrc,varstatus,basicvars,Binv,xB,pi] = partialrsm(m,n,c,A,b,Binv,varstatus,basicvars,phase1)
 % Solves an LP given a Binv is already known. 
 %   This function factors out common aspects of Phase I and II. It will
-%   solve an LP if Binv is already known. For Phase I, this is set to the
-%   identity. For Phase II, a Binv is determined from Phase I. 
+%   solve an LP if Binv is already known. For Phase I, this is initialised 
+%   to the identity. For Phase II, a Binv is determined from Phase I. 
 % Input:
 %   m,n         = number of constraints and variables
 %   c           = nx1 cost vector
@@ -38,6 +38,8 @@ while true
     end
     
     [r,minratio] = fullfindLV(n,xB,BinvAs,phase1,basicvars);
+    
+%     temp = basicvars(r);
 
     if minratio == Inf
         % problem is unbounded
@@ -46,6 +48,19 @@ while true
     end
 
     [varstatus,basicvars,~,Binv,xB] = fullupdate(m,c,s,r,BinvAs,phase1,varstatus,basicvars,Binv,xB,n);
+    
+%     fprintf("r = %f, s = %f\n", r, s);
+%     pause(0.5);
+
+%     if any(temp_array == temp)
+%         disp('HA!')
+%     else
+%         temp_array = [temp_array, temp];
+%     end
+    
+%     if temp == 2
+%         disp('break me')
+%     end
 
 end
 end

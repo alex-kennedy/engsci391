@@ -266,8 +266,8 @@ i = 0;
 
 % If you push max_size too high, you need to push max_error (a.k.a tol) higher!
 if ismember(15,tests)
-    max_size = 20;
-    max_value = 4;
+    max_size = 10;
+    max_value = 2;
     num_tests_at_dim = 1000;
     tot_num_tests = num_tests_at_dim/2*((max_size-1)^2 + max_size-1);
     for m = 1:(max_size-1)
@@ -279,7 +279,7 @@ if ismember(15,tests)
                 [result,z,x,~] = fullrsm(m,n,c,A,b);
                 if result == 1
                     options = optimoptions('linprog','Algorithm','dual-simplex');
-                    [~,xopt,z_true] = evalc('linprog(c,[],[],A,b,zeros(n,1),[],options);');
+                    [result,xopt,z_true] = evalc('linprog(c,[],[],A,b,zeros(n,1),[],options);');
                     if ~all(equal( z_true, z ))
                         disp(z_true-z)
                         disp(xopt-x)
@@ -368,6 +368,33 @@ if ismember(20, tests)
     assert(result == 1)
     assert(equal(z, [0.6000]))
     assert( all(equal(x, [0;0;0.6000;0;0])))
+end
+
+%% Test 21: A case Gemma found while running test 15
+% check how you find your leaving variable - make sure you are more likely
+% to remove artificial variables not real ones
+if ismember(21, tests)
+    m = 17;
+    n = 23;
+    A = [4,1,5,-4,5,-5,1,4,-2,-5,1,5,2,-4,3,3,-5,1,4,5,0,2,-1;3,-4,2,-3,-2,4,1,0,-1,-2,-2,0,0,4,4,0,4,3,-3,5,-1,-2,-2;5,-4,-5,1,-4,3,5,2,3,3,-5,-4,-2,-3,1,2,2,-1,2,-2,-4,1,0;4,2,-1,-2,0,2,3,0,-4,0,-5,-3,-3,-5,-3,-4,-5,-4,0,-3,-1,5,2;-2,5,-1,2,2,-3,0,-1,-1,-2,-2,-1,-5,-3,-5,-1,-4,-3,-4,-3,-1,5,-1;-3,1,-4,-1,-3,-1,-1,0,-4,-3,4,4,0,-2,-2,-1,4,0,-5,2,0,-4,5;1,4,2,-4,5,-2,1,4,0,-5,4,-3,-5,-3,4,-4,3,2,0,0,-4,4,-4;-1,0,0,5,-4,-5,-3,5,-3,-4,-3,4,-1,-4,0,5,-5,-5,5,1,0,-5,0;-2,-1,5,0,4,-4,2,4,-3,3,5,4,5,4,1,5,-3,4,-2,-5,3,0,-1;3,0,-4,3,4,5,3,4,3,-5,1,4,-4,4,3,4,1,-5,1,3,4,5,-5;1,2,-2,4,4,3,3,-2,-1,-4,3,1,-5,-1,-2,-5,1,4,-2,-5,-3,-4,-2;-2,-3,1,0,3,-1,4,-5,-3,-1,0,-5,-3,5,4,0,-2,-5,-4,0,-2,2,2;-3,-5,-2,1,3,4,1,-1,2,0,-1,-3,1,-1,1,1,-1,0,-1,0,4,-2,-2;-4,-4,-2,4,2,0,-1,0,1,4,2,2,-3,-1,-5,1,4,3,2,-5,-3,-4,-3;3,2,-4,-3,2,-5,-3,-2,3,-3,1,0,-2,-1,4,-2,4,2,2,0,5,-5,-5;0,-1,4,-1,-3,-4,3,3,1,-3,4,2,5,-1,4,-2,-5,0,2,1,5,-4,-4;2,0,-3,-1,-2,2,-2,5,-4,5,3,0,-1,2,-1,-2,5,-5,1,1,5,-2,1];
+    b = [0;5;4;2;5;5;3;5;0;0;0;1;2;4;3;2;3];
+    c = [4;2;-2;-3;0;-3;2;4;0;-3;-1;-2;-4;5;-1;1;3;0;0;0;-2;-2;1];
+    [result,z,x,pi] = fullrsm(m,n,c,A,b);
+    assert(result == 0)
+%    assert(equal(z, 43.1922))
+end
+
+%% Test 22: Jono's 'Super' Edge Case
+if ismember(22, tests)
+    m = 2;
+    n = 3;
+    A = [1 1 1; -1 -1 -1];
+    b = [0; 0];
+    c = [1; 1; 1];
+    [result,z,x,pi] = fullrsm(m,n,c,A,b);
+    assert(result == 1)
+    assert(equal(z, 0))
+    assert(all(equal(x, [0; 0; 0])))
 end
 
 %% Success message

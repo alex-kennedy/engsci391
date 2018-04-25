@@ -26,7 +26,7 @@ phase1 = true;
 
 [~,minrc,varstatus,basicvars,Binv,xB,~] = partialrsm(m,n,c,A,b,Binv,varstatus,basicvars,phase1);
 
-% Check status
+% Check Feasibility
 if any(basicvars > n)
     % Do any basic variables remain in the basis?
     
@@ -42,7 +42,11 @@ if any(basicvars > n)
     
     end
 elseif minrc > tol
+    
+    % If all artificial variables were driven from the basis, but the
+    % minimum reduced cost is still > 0, declare infeasible
     feasible = false;
+    
 else
     feasible = true;
 end
@@ -63,9 +67,16 @@ phase1 = false;
 
 [result,~,~,basicvars,~,xB,pi] = partialrsm(m,n,c,A,b,Binv,varstatus,basicvars,phase1);
 
-x = zeros(n,1);
-x(basicvars(basicvars <= n)) = xB(basicvars <= n);
+if result == 1
+    x = zeros(n,1);
+    x(basicvars(basicvars <= n)) = xB(basicvars <= n);
 
-z = c.' * x;
+    z = c.' * x;
+else
+    % Empty values for unbounded
+    z = [];
+    x = [];
+    pi = [];
+end
 
 end

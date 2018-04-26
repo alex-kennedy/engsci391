@@ -26,10 +26,21 @@ tol = 1e-8;
 while true
     pi = getpi(m,n,c,Binv,basicvars,phase1);
     
+%     fprintf('Pi\n')
+%     disp(pi.')
+    
     [s,minrc] = fullfindEV(m,n,c,A,phase1,varstatus,pi);
+    
+    fprintf('s: %f, minrc: %f', s, minrc)
     
     BinvAs = Binv * A(:,s);
     xB = Binv * b;
+    
+    fprintf('BinvAs\n')
+    BinvAs.'
+    
+    fprintf('xB\n')
+    xB.'
    
     if minrc >= -tol
         % current bfs is optimal, exit
@@ -39,7 +50,7 @@ while true
     
     [r,minratio] = fullfindLV(n,xB,BinvAs,phase1,basicvars);
     
-%     temp = basicvars(r);
+    fprintf('r: %f; minratio: %f\n', r, minratio)
 
     if minratio == Inf
         % problem is unbounded
@@ -48,20 +59,7 @@ while true
     end
 
     [varstatus,basicvars,~,Binv,xB] = fullupdate(m,c,s,r,BinvAs,phase1,varstatus,basicvars,Binv,xB,n);
-    
-%     fprintf("r = %f, s = %f\n", r, s);
-%     pause(0.5);
-
-%     if any(temp_array == temp)
-%         disp('HA!')
-%     else
-%         temp_array = [temp_array, temp];
-%     end
-    
-%     if temp == 2
-%         disp('break me')
-%     end
-
+    fprintf('NEW ITERATION.............................................\n\n\n\n\n\n\n')
 end
 end
 

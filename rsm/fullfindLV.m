@@ -37,6 +37,13 @@ ratio(BinvAs <= tol) = Inf;
 if phase1
     r = find(basicvars == max(basicvars(ratio <= minratio + tol)));
 end
+% 
+% if any(basicvars > n)
+%     
+%     
+% end
+
+    
 
 end
 

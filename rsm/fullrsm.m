@@ -2,6 +2,7 @@ function  [result,z,x,pi] = fullrsm(m,n,c,A,b)
 % Solves a linear program using Gauss-Jordon updates
 % Assumes standard computational form
 % Performs a Phase I procedure starting from an artificial basis
+% Author: Alex Kennedy | aken327 | 460783474
 % Input:
 %   m,n     = number of constraints and variables
 %   c       = nx1 cost vector
@@ -16,23 +17,21 @@ function  [result,z,x,pi] = fullrsm(m,n,c,A,b)
 % For representation error
 tol = 1e-8;
 
-% Initialisations
+% Phase I Initialisations
 basicvars = n + 1:n + m;
 Binv = eye(m);
 varstatus = zeros(1,n);
 
-% Move into Phase I
 phase1 = true;
 
 [~,minrc,varstatus,basicvars,Binv,xB,~] = partialrsm(m,n,c,A,b,Binv,varstatus,basicvars,phase1);
 
 % Check Feasibility
+% Do any basic variables remain in the basis?
 if any(basicvars > n)
-    % Do any basic variables remain in the basis?
-    
-    % TODO: Change to abs(.) < tol
-    if all((xB(basicvars > n) < tol) & (xB(basicvars > n) > -tol))
-    
+
+    if all(abs(xB(basicvars > n) < tol))
+        
         % If artificial variables are 0, continue to Phase II
         feasible = true;
     
@@ -42,6 +41,7 @@ if any(basicvars > n)
         feasible = false;
     
     end
+    
 elseif minrc > tol
     
     % If all artificial variables were driven from the basis, but the

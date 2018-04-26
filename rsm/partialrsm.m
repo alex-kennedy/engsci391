@@ -1,8 +1,9 @@
 function [result,minrc,varstatus,basicvars,Binv,xB,pi] = partialrsm(m,n,c,A,b,Binv,varstatus,basicvars,phase1)
-% Solves an LP given a Binv is already known. 
+% Solves an LP for a known starting Binv
 %   This function factors out common aspects of Phase I and II. It will
 %   solve an LP if Binv is already known. For Phase I, this is initialised 
 %   to the identity. For Phase II, a Binv is determined from Phase I. 
+% Author: Alex Kennedy | aken327 | 460783474
 % Input:
 %   m,n         = number of constraints and variables
 %   c           = nx1 cost vector
@@ -26,22 +27,11 @@ tol = 1e-8;
 while true
     pi = getpi(m,n,c,Binv,basicvars,phase1);
     
-%     fprintf('Pi\n')
-%     disp(pi.')
-    
     [s,minrc] = fullfindEV(m,n,c,A,phase1,varstatus,pi);
-    
-    fprintf('s: %f, minrc: %f', s, minrc)
     
     BinvAs = Binv * A(:,s);
     xB = Binv * b;
-    
-    fprintf('BinvAs\n')
-    BinvAs.'
-    
-    fprintf('xB\n')
-    xB.'
-   
+
     if minrc >= -tol
         % current bfs is optimal, exit
         result = 1;
@@ -50,16 +40,13 @@ while true
     
     [r,minratio] = fullfindLV(n,xB,BinvAs,phase1,basicvars);
     
-    fprintf('r: %f; minratio: %f\n', r, minratio)
-
     if minratio == Inf
-        % problem is unbounded
+        % problem is unbounded, exit
         result = -1;
         break
     end
 
     [varstatus,basicvars,~,Binv,xB] = fullupdate(m,c,s,r,BinvAs,phase1,varstatus,basicvars,Binv,xB,n);
-    fprintf('NEW ITERATION.............................................\n\n\n\n\n\n\n')
 end
 end
 

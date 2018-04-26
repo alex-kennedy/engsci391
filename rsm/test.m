@@ -3,8 +3,9 @@
 clear
 
 % Toggles for tests:
-tests = [1:13, 16:22];
-% tests = 15;
+% tests = [1:13, 16:22];
+tests = 15;
+% tests = 1:5;
 
 % Numerical errors can mean equality is not achieved within a machine
 % epsilon. We will define our own "equality" and maximum error.
@@ -266,9 +267,9 @@ i = 0;
 
 % If you push max_size too high, you need to push max_error (a.k.a tol) higher!
 if ismember(15,tests)
-    max_size = 10;
-    max_value = 2;
-    num_tests_at_dim = 1000;
+    max_size = 50;
+    max_value = 4;
+    num_tests_at_dim = 50;
     tot_num_tests = num_tests_at_dim/2*((max_size-1)^2 + max_size-1);
     for m = 1:(max_size-1)
         for n = (m+1):max_size

@@ -1,6 +1,7 @@
 function [s,minrc] = fullfindEV(~,~,c,A,phase1,varstatus,pi)
 % Returns the index of the entering variable and it's reduced cost,
 % or returns 0 if no entering variable exists
+% Author: Alex Kennedy | aken327 | 460783474
 % Input:
 %   n = number of variables
 %   c = nx1 cost vector
@@ -19,6 +20,7 @@ minrc = Inf;
 
 if phase1
     
+    % Only non-artificial variables need be considered
     for i = find(~varstatus)
         rc = -pi.' * A(:,i);
         if rc < minrc + tol

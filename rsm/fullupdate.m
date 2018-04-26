@@ -1,5 +1,6 @@
 function [varstatus,basicvars,cB,Binv,xB] = fullupdate(~,c,s,r,BinvAs,phase1,varstatus,basicvars,Binv,xB,n)
 % Updates the basis representation.
+% Author: Alex Kennedy | aken327 | 460783474
 % Input:
 %     m = number of constraints
 %     c = nx1 cost vector
@@ -35,7 +36,7 @@ if basicvars(r) <= length(varstatus)
     varstatus(basicvars(r)) = 0;
 end
 if s <= length(varstatus)
-    varstatus(s) = 1; % = r
+    varstatus(s) = r;
 end
 
 basicvars(r) = s;

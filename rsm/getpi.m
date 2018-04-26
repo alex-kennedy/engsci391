@@ -5,6 +5,7 @@ function [pi] = getpi(m,n,c,Binv,basicvars,phase1)
 %   If any artificial variables remain in the basis, their costs are set to
 %   0 to ensure no index out of range errors occur. They are dealt with by
 %   the extended leaving variable criterion in Phase II. 
+% Author: Alex Kennedy | aken327 | 460783474
 % Inputs:
 %   m,n = number of constraints and variables
 %   c = nx1 cost vector

@@ -30,6 +30,7 @@ phase1 = true;
 if any(basicvars > n)
     % Do any basic variables remain in the basis?
     
+    % TODO: Change to abs(.) < tol
     if all((xB(basicvars > n) < tol) & (xB(basicvars > n) > -tol))
     
         % If artificial variables are 0, continue to Phase II
@@ -73,7 +74,7 @@ if result == 1
 
     z = c.' * x;
 else
-    % Empty values for unbounded
+    % Empty values for the unbounded case
     z = [];
     x = [];
     pi = [];

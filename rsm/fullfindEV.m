@@ -12,15 +12,32 @@ function [s,minrc] = fullfindEV(~,~,c,A,phase1,varstatus,pi)
 %   s = index of the entering variable
 %   minrc = reduced cost of the entering variable
 
-if phase1
-    reducedCosts =  -pi.' * A;
-    reducedCosts(:,logical(varstatus)) = Inf;
-else
-    reducedCosts = c.' - pi.' * A;
-    reducedCosts(logical(varstatus)) = Inf;
-end
+tol = 1e-8;
 
-[minrc,s] = min(reducedCosts);
+s = 0;
+minrc = Inf;
+
+if phase1
+    
+    for i = find(~varstatus)
+        rc = -pi.' * A(:,i);
+        if rc < minrc + tol
+            s = i;
+            minrc = rc;
+        end
+    end
+    
+else
+    
+    for i = find(~varstatus)
+        rc = c(i) - pi.' * A(:,i);
+        if rc < minrc + tol
+            s = i;
+            minrc = rc;
+        end
+    end
+    
+end
 
 end
 

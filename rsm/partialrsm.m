@@ -26,7 +26,7 @@ tol = 1e-8;
 while true
     pi = getpi(m,n,c,Binv,basicvars,phase1);
     
-    [s,minrc] = fullfindEV(m, n, c, A, phase1, varstatus, pi);
+    [s,minrc] = fullfindEV(m,n,c,A,phase1,varstatus,pi);
     
     BinvAs = Binv * A(:,s);
     xB = Binv * b;

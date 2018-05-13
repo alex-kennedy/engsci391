@@ -6,7 +6,10 @@ demand = [1952; 722; 60; 284; 855; 0; 1078; 225; 617; 0];
 [A,b,c] = getA(offerPrice,generatorCapacity,lineCapacity,demand);
 
 [m,n] = size(A);
-[result,z,x,~] = fullrsm(m,n,c,A,b);
+% [result,z,x,~] = fullrsm(m,n,c,A,b)
+options = optimoptions('linprog','Algorithm','dual-simplex');
+[result,xopt,z_true] = evalc('linprog(c,[],[],A,b,zeros(n,1),[],options);')
+                    
 
 function [A,b,c] = getA(offerPrice,generatorCapacity,lineCapacity,demand)
     % Define the NZ electricity network in terms of city connections and 
@@ -55,8 +58,20 @@ function [A,b,c] = getA(offerPrice,generatorCapacity,lineCapacity,demand)
 
     % Add dummy demand node and connect everything to it
     dummyDemand = sum(generatorCapacity) - sum(demand);
-    [A,b,c] = addDummyDemand(A,b,c,dummyDemand);
+    
+    [~, m] = size(A);
+    b = [b; dummyDemand];
+    c = [c; zeros(nGenerators, 1)];
+    
+    A = [A; zeros(1, m)];
+    A = [A, [zeros(nCities, nGenerators); -eye(nGenerators); ones(1, nGenerators)]];
 
+%     [n, m] = size(A);
+%     b = [b; dummyDemand];
+%     c = [c; zeros(n, 1)];
+% 
+%     A = [A, -eye(n)];
+%     A = [A; zeros(1, m), ones(1, n)];
 end
 
 function [A] = connectNodes(A,from,to,bothWays)
@@ -72,13 +87,4 @@ function [A] = connectNodes(A,from,to,bothWays)
     if bothWays
         A = connectNodes(A,to,from,false);
     end
-end
-
-function [A,b,c] = addDummyDemand(A,b,c,dummyDemand)
-    [n, m] = size(A);
-    b = [b; dummyDemand];
-    c = [c; zeros(n, 1)];
-
-    A = [A, -eye(n)];
-    A = [A; zeros(1, m), ones(1, n)];
 end

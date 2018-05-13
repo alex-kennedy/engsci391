@@ -1,0 +1,108 @@
+% !TEX TS-program = xelatex
+% !TEX encoding = UTF-8 Unicode
+
+\documentclass[11pt]{article}
+\usepackage[margin=2.54cm]{geometry}
+\usepackage[usenames, dvipsnames]{color}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{wrapfig} 
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{paralist} 
+\usepackage{verbatim}
+\usepackage{subfig}
+\usepackage[parfill]{parskip}
+\usepackage{amssymb}
+\usepackage{cancel}
+\usepackage{fancyhdr}
+\usepackage{sectsty}
+\usepackage{minted}
+
+% Table of Contents
+\usepackage[nottoc,notlof,notlot]{tocbibind}
+\usepackage[titles,subfigure]{tocloft}
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape}
+
+% Haders and footers
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\lhead{}\chead{}\rhead{}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+
+% Fonts
+
+
+\geometry{a4paper}
+\graphicspath{ {images/} }
+
+% Course colours
+\definecolor{engsci314}{RGB}{32, 131, 197}
+\definecolor{engsci343}{RGB}{143, 62, 151}
+\definecolor{engsci391}{RGB}{231, 31, 99}
+\definecolor{scigen201}{RGB}{67, 160, 71}
+\definecolor{stats210}{RGB}{239, 65, 55}
+
+\begin{document}
+\begin{titlepage}
+	\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for horizontal lines, change thickness here
+
+	\center
+
+	%------------------------------------------------
+	%	Headings
+	%------------------------------------------------
+
+	\textsc{\LARGE }\\[1.5cm]
+	\textsc{\Large 2018}\\[0.5cm]
+	\textsc{\large Semester 1}\\[1cm]
+
+	{\color{engsci391}{
+		\begin{tabular*}{\textwidth}{c @{\extracolsep{\fill}} cc}
+		\specialrule{0.2em}{.05em}{.05em}
+		\end{tabular*}
+		}
+	}\\[0.4cm]
+
+	{\huge\bfseries Computing Assingment Part II}\\[0.6cm]
+	{\large ENGSCI 391}\\[1cm]
+
+	{\color{engsci391}{
+		\begin{tabular*}{\textwidth}{c @{\extracolsep{\fill}} cc}
+		\specialrule{1em}{.05em}{.05em}
+		\end{tabular*}
+		}
+	}\\[1cm]
+
+	{\large\textit{Author}}\\
+	Alex \textsc{Kennedy\\[1cm]}
+	aken327\\
+	460783474
+
+	\vfill\vfill\vfill
+	{\large\today}
+	\vfill
+
+\end{titlepage}
+
+\section*{MATLAB Setup}
+
+From the assignment brief, the following vectors were defined. They represent $\phi$, $G$, $K$, and $d$ respectively. 
+
+Complete code lies at the end of this document.
+
+\inputminted[firstline=1, lastline=4]{matlab}{main.m}
+
+\section*{Relaxed Contraints}
+
+
+
+\newpage
+\section*{Complete MATLAB Code}
+A complete listing of the MATLAB code used follows. 
+
+\inputminted{matlab}{main.m}
+
+
+\end{document}

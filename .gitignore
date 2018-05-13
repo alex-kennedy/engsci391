@@ -1,2 +1,6 @@
 *.m~
 *.asv
+*.zip
+*.synctex.gz
+*.pdf
+network/_minted-network

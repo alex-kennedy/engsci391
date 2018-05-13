@@ -5,7 +5,7 @@ demand = [1952; 722; 60; 284; 855; 0; 1078; 225; 617; 0];
 
 [A,b,c] = getA(offerPrice,generatorCapacity,lineCapacity,demand);
 
-[m,n] = size(A);
+% [m,n] = size(A);
 % [result,z,x,~] = fullrsm(m,n,c,A,b)
 options = optimoptions('linprog','Algorithm','dual-simplex');
 [result,xopt,z_true] = evalc('linprog(c,[],[],A,b,zeros(n,1),[],options);')
@@ -46,17 +46,20 @@ function [A,b,c] = getA(offerPrice,generatorCapacity,lineCapacity,demand)
     extraZeros = zeros(2 * nCityArcs, 1);
     c = [c; extraZeros];
     for i = 1:nCityArcs
-        A = connectNodes(A, cityArcs(i, 1), cityArcs(i, 2), true);
+        A = connectNodes(A, cityArcs(i, 1), cityArcs(i, 2));
+    end 
+    for i = 1:nCityArcs
+        A = connectNodes(A, cityArcs(i, 2), cityArcs(i, 1));
     end 
 
     % Connect generators
     b = [b; -generatorCapacity];
     c = [c; offerPrice];
     for i = 1:nGenerators
-        A = connectNodes(A, nCities + i, generatorArcs(i), false);
+        A = connectNodes(A, nCities + i, generatorArcs(i));
     end
-
-    % Add dummy demand node and connect everything to it
+    
+    % Add a dummy demand node and connect all the generators to it
     dummyDemand = sum(generatorCapacity) - sum(demand);
     
     [~, m] = size(A);
@@ -66,15 +69,20 @@ function [A,b,c] = getA(offerPrice,generatorCapacity,lineCapacity,demand)
     A = [A; zeros(1, m)];
     A = [A, [zeros(nCities, nGenerators); -eye(nGenerators); ones(1, nGenerators)]];
 
-%     [n, m] = size(A);
-%     b = [b; dummyDemand];
-%     c = [c; zeros(n, 1)];
-% 
-%     A = [A, -eye(n)];
-%     A = [A; zeros(1, m), ones(1, n)];
+    % -- Q4
+    % Add upper bound constraints on line capacities
+    [m,n] = size(A);
+    c = [c; zeros(nCityArcs * 2,1)];
+    b = [b; lineCapacity; lineCapacity];
+    A = [A,zeros(m,nCityArcs * 2); zeros(nCityArcs*2,1),eye(nCityArcs*2),zeros(nCityArcs*2,nGenerators*2),eye(nCityArcs*2)];
+    % -- Q4
+    
+    
+    
+
 end
 
-function [A] = connectNodes(A,from,to,bothWays)
+function [A] = connectNodes(A,from,to)
     [m, ~] = size(A);
 
     arc = zeros(m, 1);
@@ -83,8 +91,4 @@ function [A] = connectNodes(A,from,to,bothWays)
     arc(to) = 1;
 
     A = [A, arc];
-
-    if bothWays
-        A = connectNodes(A,to,from,false);
-    end
 end

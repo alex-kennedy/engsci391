@@ -18,6 +18,8 @@
 \usepackage{fancyhdr}
 \usepackage{sectsty}
 \usepackage{minted}
+\usepackage{multirow}
+% \usepackage[table,xcdraw]{xcolor}
 
 % Table of Contents
 \usepackage[nottoc,notlof,notlot]{tocbibind}
@@ -25,7 +27,7 @@
 \renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
 \renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape}
 
-% Haders and footers
+% Headers and footers
 \pagestyle{fancy}
 \renewcommand{\headrulewidth}{0pt}
 \lhead{}\chead{}\rhead{}
@@ -94,12 +96,40 @@ Complete code lies at the end of this document.
 
 \inputminted[firstline=1, lastline=4]{matlab}{main.m}
 
-\section*{Relaxed Contraints}
+\section*{Relaxed Constraints on Line and Generator Capacities}
+For this question, the problem was solved with each generator's capacity being larger than the total demand.
+
+As expected, the optimal solution consisted of all supply coming from the (tied) cheapest generator (CLY), as there was no reason for power to be generated elsewhere more expensively and there is no cost for propagation across the whole network. 
+
+\section*{Relaxed Constraints on Line Capacities}
+With line capacities relaxed, the optimal solution is produced by fully utilising each generator in order of the cheapest to most expensive, until all supply is met. 
+
+\section*{Treatment of Line Capacities}
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{@{}lr@{}}
+	\toprule
+	Generator & Utilisation (MW) \\ \midrule
+	HLY       & 1,000             \\
+	E3P       & 52               \\
+	OTA       & 400              \\
+	MRP       & 1,085             \\
+	SFD       & 336              \\
+	TKU       & 0                \\
+	WTK       & 1,270             \\
+	CLY       & 800              \\
+	MAN       & 850              \\ \bottomrule
+	\end{tabular}
+	\caption{Generation by each generator}
+\end{table}
+
+
 
 
 \newpage
 \section*{Complete MATLAB Code}
-A complete listing of the MATLAB code used follows. 
+A complete listing of the MATLAB code follows. 
 
 \inputminted{matlab}{main.m}
 

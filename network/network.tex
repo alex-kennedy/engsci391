@@ -5,7 +5,7 @@
 \usepackage[margin=2.54cm]{geometry}
 \usepackage[usenames, dvipsnames]{color}
 \usepackage{graphicx}
-\usepackage{tikz}
+% \usepackage{tikz}
 \usepackage{wrapfig} 
 \usepackage{booktabs}
 \usepackage{amsmath}
@@ -30,7 +30,7 @@
 % Headers and footers
 \pagestyle{fancy}
 \renewcommand{\headrulewidth}{0pt}
-\lhead{}\chead{}\rhead{}
+\lhead{Alex Kennedy}\chead{}\rhead{ENGSCI 391 Assignment 2}
 \lfoot{}\cfoot{\thepage}\rfoot{}
 
 % Fonts
@@ -67,7 +67,7 @@
 		}
 	}\\[0.4cm]
 
-	{\huge\bfseries Computing Assingment Part II}\\[0.6cm]
+	{\huge\bfseries Computing Assignment Part II}\\[0.6cm]
 	{\large ENGSCI 391}\\[1cm]
 
 	{\color{engsci391}{
@@ -88,7 +88,7 @@
 
 \end{titlepage}
 
-\section*{MATLAB Setup}
+\section*{MATLAB Set-up}
 
 From the assignment brief, the following vectors were defined. They represent $\phi$, $G$, $K$, and $d$ respectively. 
 
@@ -97,35 +97,166 @@ Complete code lies at the end of this document.
 \inputminted[firstline=1, lastline=4]{matlab}{main.m}
 
 \section*{Relaxed Constraints on Line and Generator Capacities}
-For this question, the problem was solved with each generator's capacity being larger than the total demand.
+As expected, the optimal solution consists of all supply coming from the (tied) cheapest generator (CLY at 5,793MW), as there is no reason for power to be generated elsewhere more expensively and there is no cost for, or limit to, propagation across the whole network. 
 
-As expected, the optimal solution consisted of all supply coming from the (tied) cheapest generator (CLY), as there was no reason for power to be generated elsewhere more expensively and there is no cost for propagation across the whole network. 
+The total cost of this set up is \$173,790/hr.
 
 \section*{Relaxed Constraints on Line Capacities}
 With line capacities relaxed, the optimal solution is produced by fully utilising each generator in order of the cheapest to most expensive, until all supply is met. 
 
+The total cost of this set up is \$233,450/hour.  
+
 \section*{Treatment of Line Capacities}
+
+The total cost of this set up is \$241,150/hr. The utilisations are obtained from the optimal $x$ and energy price at each node is obtained from the duals, $\pi$.
+
+\begin{table}[h]
+	\begin{minipage}{0.5\linewidth}
+		\centering
+		\begin{tabular}{@{}lr@{}}
+		\toprule
+		Generator & Utilisation (MW) \\ \midrule
+		HLY       & 1,000             \\
+		E3P       & 52               \\
+		OTA       & 400              \\
+		MRP       & 1,085             \\
+		SFD       & 336              \\
+		TKU       & 0                \\
+		WTK       & 1,270             \\
+		CLY       & 800              \\
+		MAN       & 850              \\ \bottomrule
+		\end{tabular}
+		\caption{Generation by each generator}
+	\end{minipage}
+	~
+	\begin{minipage}{0.5\linewidth}
+		\centering
+		\begin{tabular}{@{}lr@{}}
+		\toprule
+		Link & Utilisation (MW) \\ \midrule
+		A - H       & \color{red}{$-500$}        \\
+		H - NP      & \color{red}{$-276$}        \\
+		H - N       & \color{ForestGreen}{$139$} \\
+		NP - W      & $0$                        \\
+		N - W       & \color{red}{$-145$}        \\
+		W - B       & \color{red}{$-1000$}       \\
+		B - C       & \color{ForestGreen}{$278$}              \\
+		B - D       & \color{red}{$-8$}              \\
+		C - D       & \color{red}{$-800$}              \\
+		T - D       & \color{red}{$-233$}              \\
+		M - T       & \color{red}{$-850$}              \\ \bottomrule
+		\end{tabular}
+		\caption{Intercity transfer. Negative values represent flows against the direction specified.}
+	\end{minipage}
+\end{table}
 
 \begin{table}[h]
 	\centering
 	\begin{tabular}{@{}lr@{}}
 	\toprule
-	Generator & Utilisation (MW) \\ \midrule
-	HLY       & 1,000             \\
-	E3P       & 52               \\
-	OTA       & 400              \\
-	MRP       & 1,085             \\
-	SFD       & 336              \\
-	TKU       & 0                \\
-	WTK       & 1,270             \\
-	CLY       & 800              \\
-	MAN       & 850              \\ \bottomrule
+	City & Extra Cost (\$/MW) \\ \midrule
+	A       & 60             \\
+	H       & 55               \\
+	NP      & 55              \\
+	N       & 55             \\
+	W       & 55              \\
+	B       & 40                \\
+	C       & 40             \\
+	D       & 40              \\
+	T       & 40              \\
+	M       & 30              \\ \bottomrule
 	\end{tabular}
-	\caption{Generation by each generator}
+	\caption{Extra cost per MW of power in each city (the vector of duals)}
 \end{table}
 
+\section*{Kirchoff's Laws}
+Perhaps surprisingly, generator utilisation and duals were the same as the previous section (Tables 1, 3), as was the optimal value (\$241,150/hr). Only distribution about the network has altered.
 
+\begin{table}[h]
+	\centering
+	\begin{tabular}{@{}lr@{}}
+	\toprule
+	Link & Utilisation (MW) \\ \midrule
+	A - H       & \color{red}{$-500$}        \\
+	H - NP      & \color{red}{$-280$}        \\
+	H - N       & \color{ForestGreen}{$143$} \\
+	NP - W      & \color{red}{$-4$}          \\
+	N - W       & \color{red}{$-141$}        \\
+	W - B       & \color{red}{$-1000$}       \\
+	B - C       & \color{ForestGreen}{$292.17$}   \\
+	B - D       & \color{red}{$-22.2$}              \\
+	C - D       & \color{red}{$-785.8$}              \\
+	T - D       & \color{red}{$-233$}              \\
+	M - T       & \color{red}{$-850$}              \\ \bottomrule
+	\end{tabular}
+	\caption{Intercity transfer, accounting for Kirchoff's Laws. Negative values represent flows against the direction specified.}
+\end{table}
 
+\subsection*{Line Losses in the HVDC Cook Straight Line}
+To model losses in the Blenheim - Wellington HVDC line, the existing arcs were first disconnected. Then, an arc with capacity 500MW was connected (in both directions) where only 95\% of the electricity exiting the relevant node arrives at the destination. A further arc, also capped at 500MW, in both directions, was added as before, but with only 85\% energy arriving. This means a maximum of 1000MW can be transferred. The RSM will naturally favour the arc with less loss, simulating the effect described in the assignment. 
+
+The cost of this set up is \$246,895/hr. 
+
+\begin{table}[h]
+	\begin{minipage}{0.5\linewidth}
+		\centering
+		\begin{tabular}{@{}lr@{}}
+		\toprule
+		Generator & Utilisation (MW) \\ \midrule
+		HLY       & 1,000             \\
+		E3P       & 101               \\
+		OTA       & 400              \\
+		MRP       & 1,085             \\
+		SFD       & 387              \\
+		TKU       & 0                \\
+		WTK       & 1,270             \\
+		CLY       & 800              \\
+		MAN       & 850              \\ \bottomrule
+		\end{tabular}
+		\caption{Generation by each generator}
+	\end{minipage}
+	~
+	\begin{minipage}{0.5\linewidth}
+		\centering
+		\begin{tabular}{@{}lr@{}}
+		\toprule
+		Link & Utilisation (MW) \\ \midrule
+		A - H       & \color{red}{$-451$}            \\ % 1
+		H - NP      & \color{red}{$-284$}            \\ % 2
+		H - N       & \color{ForestGreen}{$196$}     \\ % 3
+		NP - W      & $43$                           \\ % 4
+		N - W       & \color{red}{$-88$}            \\ % 5
+		W - B       & \color{red}{$-1000$}           \\ % 6
+		B - C       & \color{ForestGreen}{$292.2$}     \\ % 7 
+		B - D       & \color{red}{$-22.2$}              \\ % 8
+		C - D       & \color{red}{$-785.8$}            \\ % 9
+		T - D       & \color{red}{$-233$}            \\ % 10
+		M - T       & \color{red}{$-850$}            \\ \bottomrule
+		\end{tabular}
+		\caption{Intercity transfer. Negative values represent flows against the direction specified.}
+	\end{minipage}
+\end{table}
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{@{}lr@{}}
+	\toprule
+	City & Extra Cost (\$/MW) \\ \midrule
+	A       & 60              \\
+	H       & 60              \\
+	NP      & 60              \\
+	N       & 60              \\
+	W       & 60              \\
+	B       & 40              \\
+	C       & 40              \\
+	D       & 40              \\
+	T       & 40              \\
+	M       & 30              \\ \bottomrule
+	\end{tabular}
+	\caption{Extra cost per MW of power in each city (the vector of duals)}
+\end{table}
+
+\newpage\phantom{hi marker :)}
 
 \newpage
 \section*{Complete MATLAB Code}

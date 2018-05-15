@@ -5,8 +5,8 @@ demand = [1952; 722; 60; 284; 855; 0; 1078; 225; 617; 0];
 
 [A,b,c] = getA(offerPrice,generatorCapacity,lineCapacity,demand);
 
-% [m,n] = size(A);
-% [result,z,x,~] = fullrsm(m,n,c,A,b)
+[m,n] = size(A);
+% [result,z,x,pi] = fullrsm(m,n,c,A,b)
 options = optimoptions('linprog','Algorithm','dual-simplex');
 [result,xopt,z_true] = evalc('linprog(c,[],[],A,b,zeros(n,1),[],options);')
                     
@@ -33,53 +33,74 @@ function [A,b,c] = getA(offerPrice,generatorCapacity,lineCapacity,demand)
 
     [nCities, ~] = size(demand);
     [nGenerators, ~] = size(generatorCapacity);
+    
+    % Initialise empty A matrix
+    A = zeros(nCities, 0);
 
-    % Initialise A, b, c with root node
-    n = nCities + nGenerators;
-    A = zeros(n, 1);
-    A(1,1) = 1;
-
-    c = 0;
-
-    % Connect cities
+    % Connect cities (in each direction)
     b = demand;
-    extraZeros = zeros(2 * nCityArcs, 1);
-    c = [c; extraZeros];
+    c = zeros(2 * nCityArcs, 1);
     for i = 1:nCityArcs
         A = connectNodes(A, cityArcs(i, 1), cityArcs(i, 2));
     end 
     for i = 1:nCityArcs
         A = connectNodes(A, cityArcs(i, 2), cityArcs(i, 1));
     end 
-
-    % Connect generators
-    b = [b; -generatorCapacity];
+    
+    % Add generator arcs
     c = [c; offerPrice];
+    newArcs = zeros(nCities, nGenerators);
+    
     for i = 1:nGenerators
-        A = connectNodes(A, nCities + i, generatorArcs(i));
+        newArcs(generatorArcs(i), i) = 1;
     end
     
-    % Add a dummy demand node and connect all the generators to it
-    dummyDemand = sum(generatorCapacity) - sum(demand);
+    A = [A, newArcs];
     
-    [~, m] = size(A);
-    b = [b; dummyDemand];
-    c = [c; zeros(nGenerators, 1)];
+    % Add upper limits on generator supply
+    [A,b,c] = limitArcs(A,b,c,23:31,generatorCapacity);
     
-    A = [A; zeros(1, m)];
-    A = [A, [zeros(nCities, nGenerators); -eye(nGenerators); ones(1, nGenerators)]];
-
-    % -- Q4
-    % Add upper bound constraints on line capacities
+    % Add upper limits on city arcs
+    [A,b,c] = limitArcs(A,b,c,1:11,lineCapacity);
+    [A,b,c] = limitArcs(A,b,c,12:22,lineCapacity);
+    
+    % Apply Kirchoff's Laws
+    [~,n] = size(A);
+    b = [b; 0; 0];
+    
+    newRows = zeros(2, n);
+    
+    newRows(1, [3,5,13,15]) = 1;
+    newRows(1, [14,16,2,3]) = -1;
+    
+    newRows(2, [19,7]) = 1;
+    newRows(2, [8,18]) = -1;
+    newRows(2, 20) = -0.4;
+    newRows(2, 9) = 0.4;
+    
+    A = [A; newRows];
+    
+    % Power loss between W and B
     [m,n] = size(A);
-    c = [c; zeros(nCityArcs * 2,1)];
-    b = [b; lineCapacity; lineCapacity];
-    A = [A,zeros(m,nCityArcs * 2); zeros(nCityArcs*2,1),eye(nCityArcs*2),zeros(nCityArcs*2,nGenerators*2),eye(nCityArcs*2)];
-    % -- Q4
+    A(:,[6, 17]) = 0; % disconnect existing arcs
+    arcs = zeros(m, 4);
     
+    arcs(5,1) = -1;    % W ->
+    arcs(6,1) = 0.95;  % B
     
+    arcs(6,2) = -1;    % B ->
+    arcs(5,2) = 0.95;  % W
     
-
+    arcs(5,3) = -1;    % W ->
+    arcs(6,3) = 0.85;  % B
+    
+    arcs(6,4) = -1;    % B ->
+    arcs(5,4) = 0.85;  % W
+    
+    A = [A, arcs];
+    c = [c; zeros(4, 1)];
+    
+    [A,b,c] = limitArcs(A,b,c,n+1:n+4,[500;500;500;500]);
 end
 
 function [A] = connectNodes(A,from,to)
@@ -91,4 +112,20 @@ function [A] = connectNodes(A,from,to)
     arc(to) = 1;
 
     A = [A, arc];
+end
+
+
+function [A,b,c] = limitArcs(A,b,c,arcsToLimit,limits)
+    [m,n] = size(A);
+    nLimits = length(limits);
+    
+    A = [A,zeros(m,nLimits)];
+    
+    bottomSection = zeros(nLimits,n);
+    bottomSection(:,arcsToLimit) = eye(nLimits);
+    bottomSection = [bottomSection, eye(nLimits)];
+    A = [A; bottomSection];
+    
+    b = [b; limits];
+    c = [c; zeros(nLimits,1)];
 end

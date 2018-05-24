@@ -19,7 +19,6 @@
 \usepackage{sectsty}
 \usepackage{minted}
 \usepackage{multirow}
-% \usepackage[table,xcdraw]{xcolor}
 
 % Table of Contents
 \usepackage[nottoc,notlof,notlot]{tocbibind}
@@ -96,17 +95,17 @@ Complete code lies at the end of this document.
 
 \inputminted[firstline=1, lastline=4]{matlab}{main.m}
 
-\section*{Relaxed Constraints on Line and Generator Capacities}
+\section*{Q2: Relaxed Constraints on Line and Generator Capacities}
 As expected, the optimal solution consists of all supply coming from the (tied) cheapest generator (CLY at 5,793MW), as there is no reason for power to be generated elsewhere more expensively and there is no cost for, or limit to, propagation across the whole network. 
 
 The total cost of this set up is \$173,790/hr.
 
-\section*{Relaxed Constraints on Line Capacities}
+\section*{Q3: Relaxed Constraints on Line Capacities}
 With line capacities relaxed, the optimal solution is produced by fully utilising each generator in order of the cheapest to most expensive, until all supply is met. 
 
 The total cost of this set up is \$233,450/hour.  
 
-\section*{Treatment of Line Capacities}
+\section*{Q4: Treatment of Line Capacities}
 
 The total cost of this set up is \$241,150/hr. The utilisations are obtained from the optimal $x$ and energy price at each node is obtained from the duals, $\pi$.
 
@@ -143,8 +142,8 @@ The total cost of this set up is \$241,150/hr. The utilisations are obtained fro
 		B - C       & \color{ForestGreen}{$278$}              \\
 		B - D       & \color{red}{$-8$}              \\
 		C - D       & \color{red}{$-800$}              \\
-		T - D       & \color{red}{$-233$}              \\
-		M - T       & \color{red}{$-850$}              \\ \bottomrule
+		T - D       & \color{ForestGreen}{$233$}              \\
+		M - T       & \color{ForestGreen}{$850$}              \\ \bottomrule
 		\end{tabular}
 		\caption{Intercity transfer. Negative values represent flows against the direction specified.}
 	\end{minipage}
@@ -169,7 +168,7 @@ The total cost of this set up is \$241,150/hr. The utilisations are obtained fro
 	\caption{Extra cost per MW of power in each city (the vector of duals)}
 \end{table}
 
-\section*{Kirchoff's Laws}
+\section*{Q5: Kirchoff's Laws}
 Perhaps surprisingly, generator utilisation and duals were the same as the previous section (Tables 1, 3), as was the optimal value (\$241,150/hr). Only distribution about the network has altered.
 
 \begin{table}[h]
@@ -186,13 +185,13 @@ Perhaps surprisingly, generator utilisation and duals were the same as the previ
 	B - C       & \color{ForestGreen}{$292.17$}   \\
 	B - D       & \color{red}{$-22.2$}              \\
 	C - D       & \color{red}{$-785.8$}              \\
-	T - D       & \color{red}{$-233$}              \\
-	M - T       & \color{red}{$-850$}              \\ \bottomrule
+	T - D       & \color{ForestGreen}{$233$}              \\
+	M - T       & \color{ForestGreen}{$850$}              \\ \bottomrule
 	\end{tabular}
 	\caption{Intercity transfer, accounting for Kirchoff's Laws. Negative values represent flows against the direction specified.}
 \end{table}
 
-\subsection*{Line Losses in the HVDC Cook Straight Line}
+\section*{Q6: Line Losses in the HVDC Cook Straight Line}
 To model losses in the Blenheim - Wellington HVDC line, the existing arcs were first disconnected. Then, an arc with capacity 500MW was connected (in both directions) where only 95\% of the electricity exiting the relevant node arrives at the destination. A further arc, also capped at 500MW, in both directions, was added as before, but with only 85\% energy arriving. This means a maximum of 1000MW can be transferred. The RSM will naturally favour the arc with less loss, simulating the effect described in the assignment. 
 
 The cost of this set up is \$246,895/hr. 
@@ -224,14 +223,14 @@ The cost of this set up is \$246,895/hr.
 		A - H       & \color{red}{$-451$}            \\ % 1
 		H - NP      & \color{red}{$-284$}            \\ % 2
 		H - N       & \color{ForestGreen}{$196$}     \\ % 3
-		NP - W      & $43$                           \\ % 4
+		NP - W      & \color{ForestGreen}{$43$}      \\ % 4
 		N - W       & \color{red}{$-88$}            \\ % 5
 		W - B       & \color{red}{$-1000$}           \\ % 6
 		B - C       & \color{ForestGreen}{$292.2$}     \\ % 7 
 		B - D       & \color{red}{$-22.2$}              \\ % 8
 		C - D       & \color{red}{$-785.8$}            \\ % 9
-		T - D       & \color{red}{$-233$}            \\ % 10
-		M - T       & \color{red}{$-850$}            \\ \bottomrule
+		T - D       & \color{ForestGreen}{$233$}         \\ % 10
+		M - T       & \color{ForestGreen}{$850$}            \\ \bottomrule
 		\end{tabular}
 		\caption{Intercity transfer. Negative values represent flows against the direction specified.}
 	\end{minipage}
@@ -259,7 +258,7 @@ The cost of this set up is \$246,895/hr.
 \newpage\phantom{hi marker :)}
 
 \newpage
-\section*{Complete MATLAB Code}
+\section*{Appendix A - Complete MATLAB Code}
 A complete listing of the MATLAB code follows. 
 
 \inputminted{matlab}{main.m}

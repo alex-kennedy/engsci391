@@ -24,8 +24,8 @@ function [A,b,c] = getA(offerPrice,generatorCapacity,lineCapacity,demand)
         6, 7;   % B - C
         6, 8;   % B - D    
         7, 8;   % C - D
-        8, 9;   % T - D
-        9, 10   % M - T
+        9, 8;   % T - D
+        10, 9   % M - T
     ];
     generatorArcs = [1; 1; 1; 2; 3; 4; 6; 8; 10];
 

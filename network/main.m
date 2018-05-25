@@ -1,17 +1,19 @@
+% EngSci 391 Assignement 2
+% Semester 1, 2018
+% Author: Alex Kennedy
+
 offerPrice = [45; 60; 50; 50; 55; 65; 40; 30; 30];
 generatorCapacity = [1000; 430; 400; 1085; 387; 640; 1750; 800; 885];
 lineCapacity = [500; 600; 500; 800; 600; 1000; 300; 200; 800; 300; 850];
 demand = [1952; 722; 60; 284; 855; 0; 1078; 225; 617; 0];
 
-[A,b,c] = getA(offerPrice,generatorCapacity,lineCapacity,demand);
+[A,b,c] = getProblem(offerPrice,generatorCapacity,lineCapacity,demand);
+[objective,cities,generators,duals] = solve(A,b,c)
 
-[m,n] = size(A);
-% [result,z,x,pi] = fullrsm(m,n,c,A,b)
-options = optimoptions('linprog','Algorithm','dual-simplex');
-[result,xopt,z_true] = evalc('linprog(c,[],[],A,b,zeros(n,1),[],options);')
-                    
+function [A,b,c] = getProblem(offerPrice,generatorCapacity,lineCapacity,demand)
+% Determines A, b, and c for the simplified electricity network, as defined
+% in standard computational form. 
 
-function [A,b,c] = getA(offerPrice,generatorCapacity,lineCapacity,demand)
     % Define the NZ electricity network in terms of city connections and 
     % associated generators
     cityArcs = [
@@ -71,7 +73,7 @@ function [A,b,c] = getA(offerPrice,generatorCapacity,lineCapacity,demand)
     newRows = zeros(2, n);
     
     newRows(1, [3,5,13,15]) = 1;
-    newRows(1, [14,16,2,3]) = -1;
+    newRows(1, [14,16,2,4]) = -1;
     
     newRows(2, [19,7]) = 1;
     newRows(2, [8,18]) = -1;
@@ -101,9 +103,18 @@ function [A,b,c] = getA(offerPrice,generatorCapacity,lineCapacity,demand)
     c = [c; zeros(4, 1)];
     
     [A,b,c] = limitArcs(A,b,c,n+1:n+4,[500;500;500;500]);
+    
 end
 
 function [A] = connectNodes(A,from,to)
+% Adds arcs to the A matrix to connect the from node to the to node
+% Args:
+%   A:      mxn existing A matrix
+%   from:   node index of arc tail (<=m)
+%   to:     node index of arc head (<=m)
+% Returns:
+%   A:      adjusted A matrix
+
     [m, ~] = size(A);
 
     arc = zeros(m, 1);
@@ -112,10 +123,23 @@ function [A] = connectNodes(A,from,to)
     arc(to) = 1;
 
     A = [A, arc];
+    
 end
 
 
 function [A,b,c] = limitArcs(A,b,c,arcsToLimit,limits)
+% Constrains arc values to some limits
+% Args: 
+%   A:             mxn A matrix
+%   b:             mx1 right hand side vector
+%   c:             nx1 cost vector
+%   arcsToLimit:   list of arcs to limit
+%   limits:        list of arc limit values (same size as arcsToLimit
+% Returns:
+%   A:             adjusted A matrix
+%   b:             adjusted right hand side vector
+%   c:             adjusted costs vector
+
     [m,n] = size(A);
     nLimits = length(limits);
     
@@ -128,4 +152,30 @@ function [A,b,c] = limitArcs(A,b,c,arcsToLimit,limits)
     
     b = [b; limits];
     c = [c; zeros(nLimits,1)];
+    
+end
+
+
+function [objective,cities,generators,duals] = solve(A,b,c)
+% Solves the electricity network problem and returns the solutions
+% Args:
+%   A:  mxn A matrix
+%   b   mx1 right hand side vector
+%   c   nx1 cost vector
+% Returns:
+%   objective:      objective value of solution
+%   cities:         values for network flows between cities
+%   generators:     generator utilisation
+%   duals:          cost increase per unit increase in demand at each city
+
+[m,n] = size(A);
+[~,~,~,pi] = fullrsm(m,n,c,A,b);
+
+options = optimoptions('linprog','Algorithm','dual-simplex');
+[~,xopt,objective] = evalc('linprog(c,[],[],A,b,zeros(n,1),[],options);');
+
+cities = xopt(1:11) - xopt(12:22);
+generators = xopt(23:31);
+duals = pi(1:10);
+
 end
